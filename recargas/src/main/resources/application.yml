@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: recargas
+  datasource:
+    url: jdbc:postgresql://clusterdbdllo.cluster-cbg8artgeyju.us-east-2.rds.amazonaws.com:5432/DBDLLO
+    username: core_application
+    password: c0r3_4ppl1c4t10n
+    driver-class-name: org.postgresql.Driver    
+    hikari:
+      minimum-idle: 1
+      maximum-pool-size: 5
+      idle-timeout: 10000
+      poolName: poolRecargas  
+  jpa:
+    generate-ddl: true  
+    show-sql: true
+#    hibernate:
+#      dialect: org.hibernate.dialect.PostgreSQLDialect
+#      ddl-auto: create-drop
+
+
+info:
+  component: recargas
+  
+management:
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: gateway,health,info
+          
+#Port - If 0 get random port
+server:
+ port: 8093
+
