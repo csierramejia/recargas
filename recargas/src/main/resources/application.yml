@@ -2,12 +2,12 @@ spring:
   application:
     name: recargas
   datasource:
-    #url: jdbc:postgresql://clusterdbdllo.cluster-cbg8artgeyju.us-east-2.rds.amazonaws.com:5432/DBDLLO
-    #username: core_application
-    #password: c0r3_4ppl1c4t10n
-    url: jdbc:postgresql://jerdevrds01.cwf68ralqtsp.us-east-1.rds.amazonaws.com/DBDLLO
-    username: administrator
-    password: 123456789    
+    url: jdbc:postgresql://clusterdbdllo.cluster-cbg8artgeyju.us-east-2.rds.amazonaws.com:5432/DBDLLO
+    username: core_application
+    password: c0r3_4ppl1c4t10n
+    #url: jdbc:postgresql://jerdevrds01.cwf68ralqtsp.us-east-1.rds.amazonaws.com/DBDLLO
+    #username: administrator
+    #password: 123456789    
     driver-class-name: org.postgresql.Driver    
     hikari:
       minimum-idle: 1
