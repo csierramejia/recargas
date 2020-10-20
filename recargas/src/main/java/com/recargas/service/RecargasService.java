@@ -116,7 +116,10 @@ public class RecargasService {
 				recargasRepository.registrarRecarga(response.getIdTransaccion(),rec.getIdOperador(), EstadoEnum.ACTIVO.name(), new Date(),
 						registrarVentaDTO.getIdUser().intValue(), rec.getValorRecarga(), rec.getNumeroRecarga());
 			}
-			TransaccionFacade.send(response.getIdTransaccion(),
+			
+			apuestaDTO.setIdTransaccion(response.getIdTransaccion());
+			
+			TransaccionFacade.send(apuestaDTO,
 					recargasRepository.consultarParametro(ParametrosConstants.CONFIRMAR_TRANSACCION));
 		}
 		}
