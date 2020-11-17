@@ -1,6 +1,7 @@
 package com.recargas.service;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -104,16 +105,22 @@ public class RecargasService {
 		ResponseDTO response =new ResponseDTO();
 		
 		try {
+			Date fechaBD = new Date();
+			// fecha BD
+			Query qBd = em.createNativeQuery("select to_char(timezone('GMT 5'\\:\\:text, CURRENT_TIMESTAMP), 'dd/mm/yyyy'\\:\\:text)");
+				String fechaChar=(String) qBd.getSingleResult();
+				SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+				fechaBD = format.parse(fechaChar);
 		
 		for (RegistrarRecargaDTO rec : registrarVentaDTO.getRecargas()) {
 			 response = TransaccionFacade.send(apuestaDTO,
 					 recargasRepository.consultarParametro(ParametrosConstants.REGISTRAR_TRANSACCION));
 			if(rec.getIdPaquete()!=null) {
-			recargasRepository.registrarRecarga(response.getIdTransaccion(),rec.getIdOperador(), EstadoEnum.ACTIVO.name(), new Date(),
+			recargasRepository.registrarRecarga(response.getIdTransaccion(),rec.getIdOperador(), EstadoEnum.ACTIVO.name(),fechaBD,
 					registrarVentaDTO.getIdUser().intValue(), rec.getValorRecarga(), rec.getNumeroRecarga(),rec.getIdPaquete());
 			}
 			else {
-				recargasRepository.registrarRecarga(response.getIdTransaccion(),rec.getIdOperador(), EstadoEnum.ACTIVO.name(), new Date(),
+				recargasRepository.registrarRecarga(response.getIdTransaccion(),rec.getIdOperador(), EstadoEnum.ACTIVO.name(),fechaBD,
 						registrarVentaDTO.getIdUser().intValue(), rec.getValorRecarga(), rec.getNumeroRecarga());
 			}
 			
