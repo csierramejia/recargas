@@ -1,6 +1,7 @@
 package com.recargas.service;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +36,8 @@ import com.recargas.util.BusinessException;
 @Transactional
 public class RecargasService {
 
+	@Value("${spring.profiles.active}")
+	public String env;
 	
 	/** Contexto de la persistencia del sistema */
 	@PersistenceContext
@@ -104,16 +108,22 @@ public class RecargasService {
 		ResponseDTO response =new ResponseDTO();
 		
 		try {
+			Date fechaBD = new Date();
+			// fecha BD
+			Query qBd = em.createNativeQuery("select to_char(timezone('GMT 5'\\:\\:text, CURRENT_TIMESTAMP), 'dd/mm/yyyy'\\:\\:text)");
+				String fechaChar=(String) qBd.getSingleResult();
+				SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+				fechaBD = format.parse(fechaChar);
 		
 		for (RegistrarRecargaDTO rec : registrarVentaDTO.getRecargas()) {
 			 response = TransaccionFacade.send(apuestaDTO,
 					 recargasRepository.consultarParametro(ParametrosConstants.REGISTRAR_TRANSACCION));
 			if(rec.getIdPaquete()!=null) {
-			recargasRepository.registrarRecarga(response.getIdTransaccion(),rec.getIdOperador(), EstadoEnum.ACTIVO.name(), new Date(),
+			recargasRepository.registrarRecarga(response.getIdTransaccion(),rec.getIdOperador(), EstadoEnum.ACTIVO.name(),fechaBD,
 					registrarVentaDTO.getIdUser().intValue(), rec.getValorRecarga(), rec.getNumeroRecarga(),rec.getIdPaquete());
 			}
 			else {
-				recargasRepository.registrarRecarga(response.getIdTransaccion(),rec.getIdOperador(), EstadoEnum.ACTIVO.name(), new Date(),
+				recargasRepository.registrarRecarga(response.getIdTransaccion(),rec.getIdOperador(), EstadoEnum.ACTIVO.name(),fechaBD,
 						registrarVentaDTO.getIdUser().intValue(), rec.getValorRecarga(), rec.getNumeroRecarga());
 			}
 			
@@ -143,6 +153,7 @@ public class RecargasService {
 	}
 	
 	public List<OperadoresRecargasDTO> consultarOperadores() throws BusinessException {
+		System.out.println("Environment " + env);
 		Query q = em.createQuery(SQLConstant.SELECT_OPERADORES).setParameter("estado", EstadoEnum.ACTIVO.name());
 		List<OperadoresRecargas> signosZodiacales = q.getResultList();
 		List<OperadoresRecargasDTO> salida = builderDTOOpe.copy(signosZodiacales);
