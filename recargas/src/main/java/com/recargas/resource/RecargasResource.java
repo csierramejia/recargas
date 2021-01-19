@@ -1,7 +1,5 @@
 package com.recargas.resource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,11 +27,6 @@ import io.swagger.annotations.ApiResponses;
 public class RecargasResource {
 	
 	/**
-	 * Atributo Logger para la app
-	 */
-	 private final Logger log = LoggerFactory.getLogger(RecargasResource.class);
-
-	/**
 	 * Atributo que representa el servicio de ClienteService
 	 */
 	@Autowired
@@ -55,8 +48,7 @@ public class RecargasResource {
 		}
 	}
 	
-	//@GetMapping(path = "/consultarOperadores", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@GetMapping(path = "/consultarOperadores")
+	@GetMapping(path = "/consultarOperadores", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ApiOperation(value = "Consultar consultarOperadores", notes = "Operación para consular consultarOperadores")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Proceso ejecutado satisfactoriamente"),
 			@ApiResponse(code = 400, message = "Se presentó una exception de negocio"),

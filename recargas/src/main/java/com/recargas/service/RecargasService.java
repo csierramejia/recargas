@@ -1,7 +1,6 @@
 package com.recargas.service;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -36,9 +35,6 @@ import com.recargas.util.BusinessException;
 @Transactional
 public class RecargasService {
 
-	@Value("${spring.profiles.active}")
-	public String env;
-	
 	/** Contexto de la persistencia del sistema */
 	@PersistenceContext
 	private EntityManager em;
@@ -153,7 +149,6 @@ public class RecargasService {
 	}
 	
 	public List<OperadoresRecargasDTO> consultarOperadores() throws BusinessException {
-		System.out.println("Environment " + env);
 		Query q = em.createQuery(SQLConstant.SELECT_OPERADORES).setParameter("estado", EstadoEnum.ACTIVO.name());
 		List<OperadoresRecargas> signosZodiacales = q.getResultList();
 		List<OperadoresRecargasDTO> salida = builderDTOOpe.copy(signosZodiacales);
