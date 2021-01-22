@@ -2,6 +2,11 @@ package com.recargas.factory;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
+import org.springframework.stereotype.Component;
 import com.recargas.service.IOperador;
 
 /**
@@ -9,6 +14,7 @@ import com.recargas.service.IOperador;
  * @author
  *
  */
+@Component
 public class OperadorFactory {
 
 	/** Objeto que almacena las implementaciones. */
@@ -17,6 +23,9 @@ public class OperadorFactory {
 	/** Instancia de la clase */
 	private static OperadorFactory instancia;
 
+	@PersistenceContext
+	private EntityManager em;
+	
 	/**
 	 * Constructor privado para definir el patrón Singleton al momento de
 	 * obtener la instancia de la clase.
@@ -40,20 +49,43 @@ public class OperadorFactory {
 	 * @throws IllegalAccessException
 	 * @throws ClassNotFoundException
 	 */
-	public IOperador obtenerOperador(int idOperador) throws InstantiationException, IllegalAccessException, ClassNotFoundException{
+	public IOperador obtenerOperador(int idOperador) 
+			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 
+		String className;
 		IOperador operador;
 		
-		if (!operadores.containsKey(idOperador)) {
+		if (operadores.containsKey(idOperador)) {
 		    operador = operadores.get(idOperador);	
 		}else {
-			// consultar en la DB
-			String className = "com.recargas.service.impl.Claro";
+			className = consultarOperador(idOperador);
 			operador = (IOperador)Class.forName(className).newInstance();
 			operadores.put(idOperador, operador);
 		}
 		
 		return operador;
+	}
+	
+	/**
+	 * 
+	 * @param idOperador
+	 * @return
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws ClassNotFoundException
+	 */
+	private String consultarOperador(int idOperador) 
+			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+		
+		Query qBd = em.createNativeQuery("select clase_implementacion from operadores_recargas where id_operador = ?");
+		
+		String claseImplementacion = (String) qBd
+				.setParameter(1, idOperador)
+				.getSingleResult();
+		
+		System.out.println("claseImplementacion  " + claseImplementacion);
+		
+		return claseImplementacion;
 	}
 	
 }
