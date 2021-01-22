@@ -48,7 +48,8 @@ public class RecargasResource {
 		}
 	}
 	
-	@GetMapping(path = "/consultarOperadores", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	//@GetMapping(path = "/consultarOperadores", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@GetMapping(path = "/consultarOperadores")
 	@ApiOperation(value = "Consultar consultarOperadores", notes = "Operación para consular consultarOperadores")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Proceso ejecutado satisfactoriamente"),
 			@ApiResponse(code = 400, message = "Se presentó una exception de negocio"),

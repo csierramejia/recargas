@@ -1,5 +1,6 @@
 package com.recargas.service;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -71,7 +72,17 @@ public class RecargasService {
 		}
 		apuestaDTO.setFecha(registrarVentaDTO.getDatePlayed());
 		SimpleDateFormat horaF = new SimpleDateFormat("HH:mm:ss");
-		apuestaDTO.setHora(horaF.format(registrarVentaDTO.getDatePlayed() != null ? registrarVentaDTO.getDatePlayed() : new Date()));
+		///primero validamos si alguna de las loterias ya cerro
+		Query qBd=em.createNativeQuery("select to_char(timezone('GMT 5'\\:\\:text, CURRENT_TIMESTAMP), 'HH24:MI:SS'\\:\\:text)");
+		String horaBD=(String) qBd.getSingleResult();
+		////
+		Date horaBDC=new Date();
+		try {
+			horaBDC = horaF.parse(horaBD);
+		} catch (ParseException e1) {
+			
+		}
+		apuestaDTO.setHora(horaF.format(horaBDC));
 		if(registrarVentaDTO.getIdCustomer() != null) {
 			apuestaDTO.setIdCliente(registrarVentaDTO.getIdCustomer().intValue());
 		}
