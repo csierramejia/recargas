@@ -10,7 +10,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +30,7 @@ import com.recargas.enums.ProductosEnum;
 import com.recargas.facade.TransaccionFacade;
 import com.recargas.repository.IRecargasRepository;
 import com.recargas.util.BusinessException;
+import com.recargas.factory.OperadorFactory;
 
 @Service
 @Transactional
@@ -122,23 +122,27 @@ public class RecargasService {
 				SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 				fechaBD = format.parse(fechaChar);
 		
-		for (RegistrarRecargaDTO rec : registrarVentaDTO.getRecargas()) {
-			 response = TransaccionFacade.send(apuestaDTO,
-					 recargasRepository.consultarParametro(ParametrosConstants.REGISTRAR_TRANSACCION));
-			if(rec.getIdPaquete()!=null) {
-			recargasRepository.registrarRecarga(response.getIdTransaccion(),rec.getIdOperador(), EstadoEnum.ACTIVO.name(),fechaBD,
-					registrarVentaDTO.getIdUser().intValue(), rec.getValorRecarga(), rec.getNumeroRecarga(),rec.getIdPaquete());
-			}
-			else {
+			for (RegistrarRecargaDTO rec : registrarVentaDTO.getRecargas()) {
+				 response = TransaccionFacade.send(apuestaDTO,
+						 recargasRepository.consultarParametro(ParametrosConstants.REGISTRAR_TRANSACCION));
+				if(rec.getIdPaquete()!=null) {
 				recargasRepository.registrarRecarga(response.getIdTransaccion(),rec.getIdOperador(), EstadoEnum.ACTIVO.name(),fechaBD,
-						registrarVentaDTO.getIdUser().intValue(), rec.getValorRecarga(), rec.getNumeroRecarga());
+						registrarVentaDTO.getIdUser().intValue(), rec.getValorRecarga(), rec.getNumeroRecarga(),rec.getIdPaquete());
+				}
+				else {
+					recargasRepository.registrarRecarga(response.getIdTransaccion(),rec.getIdOperador(), EstadoEnum.ACTIVO.name(),fechaBD,
+							registrarVentaDTO.getIdUser().intValue(), rec.getValorRecarga(), rec.getNumeroRecarga());
+				}
+				
+				apuestaDTO.setIdTransaccion(response.getIdTransaccion());
+				
+				TransaccionFacade.send(apuestaDTO,
+						recargasRepository.consultarParametro(ParametrosConstants.CONFIRMAR_TRANSACCION));
+
+				// Se envia la transaccion al operador
+				OperadorFactory.getInstance().obtenerOperador(
+						rec.getIdOperador()).recargar(rec);
 			}
-			
-			apuestaDTO.setIdTransaccion(response.getIdTransaccion());
-			
-			TransaccionFacade.send(apuestaDTO,
-					recargasRepository.consultarParametro(ParametrosConstants.CONFIRMAR_TRANSACCION));
-		}
 		}
 		catch(Exception e) {
 			response.setExito(Boolean.FALSE);
@@ -165,4 +169,5 @@ public class RecargasService {
 		List<OperadoresRecargasDTO> salida = builderDTOOpe.copy(signosZodiacales);
 		return salida;
 	}
+	
 }
