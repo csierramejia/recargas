@@ -9,7 +9,7 @@ import javax.persistence.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.recargas.repository.IRecargasRepository;
 import com.recargas.service.IOperador;
@@ -20,7 +20,7 @@ import com.recargas.service.IOperador;
  * @author
  *
  */
-@Component
+@Service
 public class OperadorFactory {
 
 	/** Objeto que almacena las implementaciones. */
@@ -94,7 +94,7 @@ public class OperadorFactory {
 	private String consultarOperador(int idOperador) 
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		
-		log.error("consultarOperador repository " + idOperador);
+		log.error("consultarOperador repository ::: " + idOperador);
 		
 //		Query qBd = em.createNativeQuery("select clase_implementacion from operadores_recargas where id_operador = ?");
 //		
