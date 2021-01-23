@@ -5,16 +5,12 @@ import java.io.StringWriter;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.recargas.repository.IRecargasRepository;
 import com.recargas.service.IOperador;
 
 
@@ -24,7 +20,7 @@ import com.recargas.service.IOperador;
  *
  */
 @Service
-@Transactional
+//@Transactional
 public class OperadorFactory {
 
 	/** Objeto que almacena las implementaciones. */
@@ -33,11 +29,11 @@ public class OperadorFactory {
 	/** Instancia de la clase */
 	private static OperadorFactory instancia;
 
-	@PersistenceContext
+//	@PersistenceContext
 	private EntityManager em;
 	
-	@Autowired
-	private IRecargasRepository recargasRepository;
+//	@Autowired
+//	private IRecargasRepository recargasRepository;
 	
 	private final Logger log = LoggerFactory.getLogger(OperadorFactory.class);
 	
@@ -49,9 +45,10 @@ public class OperadorFactory {
 		operadores = new ConcurrentHashMap<Integer, IOperador>();
 	}
 	
-	public static OperadorFactory getInstance() {
+	public static OperadorFactory getInstance(EntityManager em) {
 		if (instancia == null) {
 			instancia = new OperadorFactory();
+			instancia.setEm(em);
 		}
 		return instancia;
 	}
@@ -121,6 +118,14 @@ public class OperadorFactory {
 		System.out.println("claseImplementacion  " + claseImplementacion);
 		
 		return claseImplementacion;
+	}
+
+	public EntityManager getEm() {
+		return em;
+	}
+
+	public void setEm(EntityManager em) {
+		this.em = em;
 	}
 	
 }
