@@ -146,12 +146,15 @@ public class RecargasService {
 				// Se envia la transaccion al operador
 				log.error("Operador " + rec.getIdOperador());
 				OperadorFactory factory = OperadorFactory.getInstance();
+				log.error("Crea factory ");
 				IOperador operador = factory.obtenerOperador(rec.getIdOperador());
+				log.error("Crea operador ");
 				operador.recargar(rec);
-				
+				log.error("Operador recargar ");
 			}
 		}
 		catch(Exception e) {
+			log.error(e.getMessage());
 			response.setExito(Boolean.FALSE);
 			response.setMensaje(e.getMessage());
 			return response;
