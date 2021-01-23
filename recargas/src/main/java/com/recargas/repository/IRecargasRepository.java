@@ -58,4 +58,11 @@ public interface IRecargasRepository extends JpaRepository<Recargas, Long> {
 				@Param("idParametro") Integer idParametro
 			  );
 	
+	@Query(value=" SELECT clase_implementacion FROM operadores_recargas "
+			+ " WHERE id_operador = :idOperador ",
+		    nativeQuery = true)
+	  String consultarClaseImplementacion(
+				@Param("idOperador") Integer idOperador
+			  );
+	
 }

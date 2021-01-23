@@ -8,9 +8,10 @@ import javax.persistence.Query;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import org.springframework.stereotype.Service;
-
+import com.recargas.repository.IRecargasRepository;
 import com.recargas.service.IOperador;
 
 
@@ -19,7 +20,7 @@ import com.recargas.service.IOperador;
  * @author
  *
  */
-@Service
+@Component
 public class OperadorFactory {
 
 	/** Objeto que almacena las implementaciones. */
@@ -28,8 +29,11 @@ public class OperadorFactory {
 	/** Instancia de la clase */
 	private static OperadorFactory instancia;
 
-	@PersistenceContext
-	private EntityManager em;
+//	@PersistenceContext
+//	private EntityManager em;
+	
+	@Autowired
+	private IRecargasRepository recargasRepository;
 	
 	private final Logger log = LoggerFactory.getLogger(OperadorFactory.class);
 	
@@ -90,15 +94,17 @@ public class OperadorFactory {
 	private String consultarOperador(int idOperador) 
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		
-		log.error("consultarOperador " + idOperador);
+		log.error("consultarOperador repository " + idOperador);
 		
-		Query qBd = em.createNativeQuery("select clase_implementacion from operadores_recargas where id_operador = ?");
+//		Query qBd = em.createNativeQuery("select clase_implementacion from operadores_recargas where id_operador = ?");
+//		
+//		String claseImplementacion = (String) qBd
+//				.setParameter(1, idOperador)
+//				.getSingleResult();
 		
-		String claseImplementacion = (String) qBd
-				.setParameter(1, idOperador)
-				.getSingleResult();
+		String claseImplementacion = recargasRepository.consultarClaseImplementacion(idOperador);
 		
-		log.error("claseImplementacion " + claseImplementacion);
+		log.error("claseImplementacion repository " + claseImplementacion);
 		System.out.println("claseImplementacion  " + claseImplementacion);
 		
 		return claseImplementacion;
