@@ -147,7 +147,7 @@ public class RecargasService {
 				
 				// Se envia la transaccion al operador
 				log.error("Operador " + rec.getIdOperador());
-				OperadorFactory factory = OperadorFactory.getInstance();
+				OperadorFactory factory = OperadorFactory.getInstance(em);
 				log.error("Crea factory ");
 				IOperador operador = factory.obtenerOperador(rec.getIdOperador());
 				log.error("Crea operador ");
