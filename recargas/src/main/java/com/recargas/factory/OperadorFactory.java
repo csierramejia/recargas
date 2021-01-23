@@ -1,10 +1,13 @@
 package com.recargas.factory;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +24,7 @@ import com.recargas.service.IOperador;
  *
  */
 @Service
+@Transactional
 public class OperadorFactory {
 
 	/** Objeto que almacena las implementaciones. */
@@ -29,8 +33,8 @@ public class OperadorFactory {
 	/** Instancia de la clase */
 	private static OperadorFactory instancia;
 
-//	@PersistenceContext
-//	private EntityManager em;
+	@PersistenceContext
+	private EntityManager em;
 	
 	@Autowired
 	private IRecargasRepository recargasRepository;
@@ -96,14 +100,23 @@ public class OperadorFactory {
 		
 		log.error("consultarOperador repository ::: " + idOperador);
 		
-//		Query qBd = em.createNativeQuery("select clase_implementacion from operadores_recargas where id_operador = ?");
-//		
-//		String claseImplementacion = (String) qBd
-//				.setParameter(1, idOperador)
-//				.getSingleResult();
+		String claseImplementacion = "";
 		
-		String claseImplementacion = recargasRepository.consultarClaseImplementacion(idOperador);
+		try {
+		Query qBd = em.createNativeQuery("select clase_implementacion from operadores_recargas where id_operador = ?");
 		
+		claseImplementacion = (String) qBd
+				.setParameter(1, idOperador)
+				.getSingleResult();
+		
+//		String claseImplementacion = recargasRepository.consultarClaseImplementacion(idOperador);
+		}catch(Exception e) {
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			String sStackTrace = sw.toString(); // stack trace as a string
+			log.error(sStackTrace);			
+		}
 		log.error("claseImplementacion repository " + claseImplementacion);
 		System.out.println("claseImplementacion  " + claseImplementacion);
 		
