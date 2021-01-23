@@ -32,6 +32,9 @@ import com.recargas.repository.IRecargasRepository;
 import com.recargas.util.BusinessException;
 import com.recargas.factory.OperadorFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 @Transactional
 public class RecargasService {
@@ -43,6 +46,7 @@ public class RecargasService {
 	@Autowired
 	private IRecargasRepository recargasRepository;
 	
+	private final Logger log = LoggerFactory.getLogger(RecargasService.class);
 	
 	Builder<PaquetesRecargas, PaquetesRecargasDTO> builderDTOPaque = new Builder<PaquetesRecargas,PaquetesRecargasDTO>(PaquetesRecargasDTO.class);
 	/**
@@ -140,6 +144,7 @@ public class RecargasService {
 						recargasRepository.consultarParametro(ParametrosConstants.CONFIRMAR_TRANSACCION));
 				
 				// Se envia la transaccion al operador
+				log.error("Operador " + rec.getIdOperador());
 				OperadorFactory factory = OperadorFactory.getInstance();
 				IOperador operador = factory.obtenerOperador(rec.getIdOperador());
 				operador.recargar(rec);
