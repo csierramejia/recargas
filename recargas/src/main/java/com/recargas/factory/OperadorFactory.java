@@ -6,8 +6,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import com.recargas.service.IOperador;
+import com.recargas.service.RecargasService;
 
 /**
  * 
@@ -25,6 +28,8 @@ public class OperadorFactory {
 
 	@PersistenceContext
 	private EntityManager em;
+	
+	private final Logger log = LoggerFactory.getLogger(OperadorFactory.class);
 	
 	/**
 	 * Constructor privado para definir el patrón Singleton al momento de
@@ -55,9 +60,12 @@ public class OperadorFactory {
 		String className;
 		IOperador operador;
 		
+		log.error("obtenerOperador " + idOperador);
 		if (operadores.containsKey(idOperador)) {
+			log.error("containsKey " + idOperador);
 		    operador = operadores.get(idOperador);	
 		}else {
+			log.error("else containsKey ");
 			className = consultarOperador(idOperador);
 			operador = (IOperador)Class.forName(className).newInstance();
 			operadores.put(idOperador, operador);
@@ -77,12 +85,15 @@ public class OperadorFactory {
 	private String consultarOperador(int idOperador) 
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		
+		log.error("consultarOperador " + idOperador);
+		
 		Query qBd = em.createNativeQuery("select clase_implementacion from operadores_recargas where id_operador = ?");
 		
 		String claseImplementacion = (String) qBd
 				.setParameter(1, idOperador)
 				.getSingleResult();
 		
+		log.error("claseImplementacion " + claseImplementacion);
 		System.out.println("claseImplementacion  " + claseImplementacion);
 		
 		return claseImplementacion;
