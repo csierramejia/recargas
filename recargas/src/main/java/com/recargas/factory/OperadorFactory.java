@@ -67,8 +67,11 @@ public class OperadorFactory {
 		}else {
 			log.error("else containsKey ");
 			className = consultarOperador(idOperador);
+			log.error("Class.forName " + className);
 			operador = (IOperador)Class.forName(className).newInstance();
+			log.error("operador " + operador.getClass());
 			operadores.put(idOperador, operador);
+			log.error("despues de put " + idOperador);
 		}
 		
 		return operador;
