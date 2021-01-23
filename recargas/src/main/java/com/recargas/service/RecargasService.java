@@ -138,6 +138,12 @@ public class RecargasService {
 				
 				TransaccionFacade.send(apuestaDTO,
 						recargasRepository.consultarParametro(ParametrosConstants.CONFIRMAR_TRANSACCION));
+				
+				// Se envia la transaccion al operador
+				OperadorFactory factory = OperadorFactory.getInstance();
+				IOperador operador = factory.obtenerOperador(rec.getIdOperador());
+				operador.recargar(rec);
+				
 			}
 		}
 		catch(Exception e) {
