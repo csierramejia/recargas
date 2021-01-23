@@ -8,16 +8,18 @@ import javax.persistence.Query;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+
+import org.springframework.stereotype.Service;
+
 import com.recargas.service.IOperador;
-import com.recargas.service.RecargasService;
+
 
 /**
  * 
  * @author
  *
  */
-@Component
+@Service
 public class OperadorFactory {
 
 	/** Objeto que almacena las implementaciones. */
