@@ -1,14 +1,10 @@
 package com.recargas.factory;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.recargas.service.IOperador;
@@ -20,7 +16,6 @@ import com.recargas.service.IOperador;
  *
  */
 @Service
-//@Transactional
 public class OperadorFactory {
 
 	/** Objeto que almacena las implementaciones. */
@@ -29,13 +24,7 @@ public class OperadorFactory {
 	/** Instancia de la clase */
 	private static OperadorFactory instancia;
 
-//	@PersistenceContext
-	private EntityManager em;
-	
-//	@Autowired
-//	private IRecargasRepository recargasRepository;
-	
-	private final Logger log = LoggerFactory.getLogger(OperadorFactory.class);
+	private EntityManager entityManager;
 	
 	/**
 	 * Constructor privado para definir el patrón Singleton al momento de
@@ -45,10 +34,15 @@ public class OperadorFactory {
 		operadores = new ConcurrentHashMap<Integer, IOperador>();
 	}
 	
-	public static OperadorFactory getInstance(EntityManager em) {
+	/**
+	 * 
+	 * @param entityManager
+	 * @return
+	 */
+	public static OperadorFactory getInstance(EntityManager entityManager) {
 		if (instancia == null) {
 			instancia = new OperadorFactory();
-			instancia.setEm(em);
+			instancia.setEntityManager(entityManager);
 		}
 		return instancia;
 	}
@@ -67,18 +61,12 @@ public class OperadorFactory {
 		String className;
 		IOperador operador;
 		
-		log.error("obtenerOperador " + idOperador);
 		if (operadores.containsKey(idOperador)) {
-			log.error("containsKey " + idOperador);
 		    operador = operadores.get(idOperador);	
 		}else {
-			log.error("else containsKey ");
 			className = consultarOperador(idOperador);
-			log.error("Class.forName " + className);
 			operador = (IOperador)Class.forName(className).newInstance();
-			log.error("operador " + operador.getClass());
 			operadores.put(idOperador, operador);
-			log.error("despues de put " + idOperador);
 		}
 		
 		return operador;
@@ -95,37 +83,23 @@ public class OperadorFactory {
 	private String consultarOperador(int idOperador) 
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		
-		log.error("consultarOperador repository ::: " + idOperador);
-		
 		String claseImplementacion = "";
 		
-		try {
-		Query qBd = em.createNativeQuery("select clase_implementacion from operadores_recargas where id_operador = ?");
+		Query qBd = entityManager.createNativeQuery(
+				"select clase_implementacion from operadores_recargas where id_operador = ?");
 		
-		claseImplementacion = (String) qBd
-				.setParameter(1, idOperador)
+		claseImplementacion = (String) qBd.setParameter(1, idOperador)
 				.getSingleResult();
-		
-//		String claseImplementacion = recargasRepository.consultarClaseImplementacion(idOperador);
-		}catch(Exception e) {
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-			e.printStackTrace(pw);
-			String sStackTrace = sw.toString(); // stack trace as a string
-			log.error(sStackTrace);			
-		}
-		log.error("claseImplementacion repository " + claseImplementacion);
-		System.out.println("claseImplementacion  " + claseImplementacion);
 		
 		return claseImplementacion;
 	}
 
-	public EntityManager getEm() {
-		return em;
+	public EntityManager getEntityManager() {
+		return entityManager;
 	}
 
-	public void setEm(EntityManager em) {
-		this.em = em;
+	public void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
 	}
-	
+
 }

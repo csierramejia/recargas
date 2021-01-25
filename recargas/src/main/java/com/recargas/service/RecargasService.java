@@ -1,7 +1,5 @@
 package com.recargas.service;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -146,22 +144,12 @@ public class RecargasService {
 						recargasRepository.consultarParametro(ParametrosConstants.CONFIRMAR_TRANSACCION));
 				
 				// Se envia la transaccion al operador
-				log.error("Operador " + rec.getIdOperador());
 				OperadorFactory factory = OperadorFactory.getInstance(em);
-				log.error("Crea factory ");
 				IOperador operador = factory.obtenerOperador(rec.getIdOperador());
-				log.error("Crea operador ");
 				operador.recargar(rec);
-				log.error("Operador recargar ");
 			}
 		}
 		catch(Exception e) {
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-			e.printStackTrace(pw);
-			String sStackTrace = sw.toString(); // stack trace as a string
-			log.error(sStackTrace);
-			
 			log.error(e.getMessage());
 			response.setExito(Boolean.FALSE);
 			response.setMensaje(e.getMessage());
