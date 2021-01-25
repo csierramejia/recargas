@@ -11,7 +11,7 @@ public class Claro implements IOperador{
 
 	@Override
 	public ResponseDTO recargar(RegistrarRecargaDTO recargaDTO) {
-		System.out.println("Estrategia claro, Factory");
+		System.out.println("Operador Claro");
 		return null;
 	}
 
