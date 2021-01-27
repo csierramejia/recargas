@@ -13,7 +13,7 @@ phases:
       - aws --version
       - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
       - pip3 install awscli --upgrade --user
-      #- ACCOUNT_ID=aws sts get-caller-identity --query Account --output text
+      - export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain logii-cartera --domain-owner $AWS_ACCOUNT_ID --query authorizationToken --output text`
       - echo ACCOUNT_ID $AWS_ACCOUNT_ID
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=${COMMIT_HASH:=latest}
