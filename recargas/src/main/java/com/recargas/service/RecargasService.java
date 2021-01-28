@@ -125,17 +125,19 @@ public class RecargasService {
 				String fechaChar=(String) qBd.getSingleResult();
 				SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 				fechaBD = format.parse(fechaChar);
+				qBd=em.createNativeQuery("select to_char(timezone('GMT 5'\\:\\:text, CURRENT_TIMESTAMP), 'HH24:MI:SS'\\:\\:text)");
+				String horaBD=(String) qBd.getSingleResult();
 		
 			for (RegistrarRecargaDTO rec : registrarVentaDTO.getRecargas()) {
 				 response = TransaccionFacade.send(apuestaDTO,
 						 recargasRepository.consultarParametro(ParametrosConstants.REGISTRAR_TRANSACCION));
 				if(rec.getIdPaquete()!=null) {
 				recargasRepository.registrarRecarga(response.getIdTransaccion(),rec.getIdOperador(), EstadoEnum.ACTIVO.name(),fechaBD,
-						registrarVentaDTO.getIdUser().intValue(), rec.getValorRecarga(), rec.getNumeroRecarga(),rec.getIdPaquete());
+						registrarVentaDTO.getIdUser().intValue(), rec.getValorRecarga(), rec.getNumeroRecarga(),rec.getIdPaquete(),horaBD);
 				}
 				else {
 					recargasRepository.registrarRecarga(response.getIdTransaccion(),rec.getIdOperador(), EstadoEnum.ACTIVO.name(),fechaBD,
-							registrarVentaDTO.getIdUser().intValue(), rec.getValorRecarga(), rec.getNumeroRecarga());
+							registrarVentaDTO.getIdUser().intValue(), rec.getValorRecarga(), rec.getNumeroRecarga(),horaBD);
 				}
 				
 				apuestaDTO.setIdTransaccion(response.getIdTransaccion());
