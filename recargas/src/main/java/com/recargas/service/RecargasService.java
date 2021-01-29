@@ -63,6 +63,13 @@ public class RecargasService {
     	ResponseDTO response =null;
     	try {
     		TransaccionDTO apuestaDTO = new TransaccionDTO();
+    		
+    		if(!obtenerRolAdministrador(registrarVentaDTO.getIdUser()) && !obtenerProgramacion(registrarVentaDTO.getIdUser())) {
+    			response = new ResponseDTO();
+    			response.setExito(Boolean.FALSE);
+    			response.setMensaje("No tiene programación de horario para la hora especifica.");
+        		return response;
+    						}
 		if(registrarVentaDTO.getCanal()!=null && registrarVentaDTO.getCanal().equals(CanalEnum.MOVIL.canal)) {
 		apuestaDTO.setIdCanal(CanalEnum.MOVIL.canalNumero);
 		}
@@ -95,6 +102,8 @@ public class RecargasService {
 				response= new ResponseDTO();
 			}
 			response.setExito(Boolean.FALSE);
+			response.setMensaje("No tiene programación de horario para la hora especifica.");
+	        
 		}
 		return response;
 	}
@@ -125,7 +134,7 @@ public class RecargasService {
 		}
 		catch(Exception e) {
 			response.setExito(Boolean.FALSE);
-			response.setMensaje(e.getMessage());
+			response.setMensaje("Problemas con la transacción");
 			return response;
 		}
 	
@@ -147,5 +156,33 @@ public class RecargasService {
 		List<OperadoresRecargas> signosZodiacales = q.getResultList();
 		List<OperadoresRecargasDTO> salida = builderDTOOpe.copy(signosZodiacales);
 		return salida;
+	}
+	
+	/**
+	 * Metodo encargado de retornar la ubicación de un usuario asociada a su
+	 * programacion
+	 * 
+	 * @param idUsuario
+	 * @return boolean
+	 * @throws Exception
+	 */
+	private Boolean obtenerProgramacion(Long idUsuario) throws Exception {
+		Query q = this.em.createNativeQuery(SQLConstant.GET_PROGRAMACION_VENDEDOR);
+			q.setParameter("idUsuario", idUsuario);
+			return  (boolean) q.getSingleResult();	
+			
+	}
+	
+	/**
+	 * Metodo que permite validar si un usuario tiene rol administrador
+	 * @param idUsuario
+	 * @return boolean
+	 * @throws Exception
+	 */
+	private Boolean obtenerRolAdministrador(Long idUsuario) throws Exception {
+		Query q = this.em.createNativeQuery(SQLConstant.GET_ROL_ADMIN);
+			q.setParameter("idUsuario", idUsuario);
+			return  (boolean) q.getSingleResult();	
+			
 	}
 }
