@@ -20,24 +20,7 @@ public interface IRecargasRepository extends JpaRepository<Recargas, Long> {
 	@Query(
 	  value = 
 	    " INSERT INTO recargas "
-	    + " (id_recarga,id_operador, id_estado, fecha, id_usuario, valor,numero_celular) "
-	    + " VALUES (?, ?, ?, ?, ?, ?,?)",
-	  nativeQuery = true)
-	void registrarRecarga(
-			@Param("idRecarga") Long idRecarga,
-			@Param("idOperador") Integer idOperador, 
-			@Param("idEstado") String idEstado,
-			@Param("fecha") Date fecha,
-			@Param("idUsuario") Integer idUsuario,
-			@Param("valor") Long valor, 
-	        @Param("numeroCelular") String numeroCelular);
-	
-
-	@Modifying
-	@Query(
-	  value = 
-	    " INSERT INTO recargas "
-	    + " (id_recarga,id_operador, id_estado, fecha, id_usuario, valor,numero_celular,id_paquete) "
+	    + " (id_recarga,id_operador, id_estado, fecha, id_usuario, valor,numero_celular,hora) "
 	    + " VALUES (?, ?, ?, ?, ?, ?,?,?)",
 	  nativeQuery = true)
 	void registrarRecarga(
@@ -47,8 +30,25 @@ public interface IRecargasRepository extends JpaRepository<Recargas, Long> {
 			@Param("fecha") Date fecha,
 			@Param("idUsuario") Integer idUsuario,
 			@Param("valor") Long valor, 
+	        @Param("numeroCelular") String numeroCelular,@Param("hora") String hora);
+	
+
+	@Modifying
+	@Query(
+	  value = 
+	    " INSERT INTO recargas "
+	    + " (id_recarga,id_operador, id_estado, fecha, id_usuario, valor,numero_celular,id_paquete, hora) "
+	    + " VALUES (?, ?, ?, ?, ?, ?,?,?,?)",
+	  nativeQuery = true)
+	void registrarRecarga(
+			@Param("idRecarga") Long idRecarga,
+			@Param("idOperador") Integer idOperador, 
+			@Param("idEstado") String idEstado,
+			@Param("fecha") Date fecha,
+			@Param("idUsuario") Integer idUsuario,
+			@Param("valor") Long valor, 
 	        @Param("numeroCelular") String numeroCelular,
-	        @Param("idPaquete") Integer idPaquete);
+	        @Param("idPaquete") Integer idPaquete,@Param("hora") String hora);
 	
 
 	@Query(value=" SELECT valor FROM parametros "
@@ -56,6 +56,13 @@ public interface IRecargasRepository extends JpaRepository<Recargas, Long> {
 		    nativeQuery = true)
 	  String consultarParametro(
 				@Param("idParametro") Integer idParametro
+			  );
+	
+	@Query(value=" SELECT clase_implementacion FROM operadores_recargas "
+			+ " WHERE id_operador = :idOperador ",
+		    nativeQuery = true)
+	  String consultarClaseImplementacion(
+				@Param("idOperador") Integer idOperador
 			  );
 	
 }

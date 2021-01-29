@@ -1,5 +1,6 @@
 package com.recargas.service;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -29,12 +30,15 @@ import com.recargas.enums.ProductosEnum;
 import com.recargas.facade.TransaccionFacade;
 import com.recargas.repository.IRecargasRepository;
 import com.recargas.util.BusinessException;
+import com.recargas.factory.OperadorFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @Transactional
 public class RecargasService {
 
-	
 	/** Contexto de la persistencia del sistema */
 	@PersistenceContext
 	private EntityManager em;
@@ -42,6 +46,7 @@ public class RecargasService {
 	@Autowired
 	private IRecargasRepository recargasRepository;
 	
+	private final Logger log = LoggerFactory.getLogger(RecargasService.class);
 	
 	Builder<PaquetesRecargas, PaquetesRecargasDTO> builderDTOPaque = new Builder<PaquetesRecargas,PaquetesRecargasDTO>(PaquetesRecargasDTO.class);
 	/**
@@ -78,7 +83,17 @@ public class RecargasService {
 		}
 		apuestaDTO.setFecha(registrarVentaDTO.getDatePlayed());
 		SimpleDateFormat horaF = new SimpleDateFormat("HH:mm:ss");
-		apuestaDTO.setHora(horaF.format(registrarVentaDTO.getDatePlayed() != null ? registrarVentaDTO.getDatePlayed() : new Date()));
+		///primero validamos si alguna de las loterias ya cerro
+		Query qBd=em.createNativeQuery("select to_char(timezone('GMT 5'\\:\\:text, CURRENT_TIMESTAMP), 'HH24:MI:SS'\\:\\:text)");
+		String horaBD=(String) qBd.getSingleResult();
+		////
+		Date horaBDC=new Date();
+		try {
+			horaBDC = horaF.parse(horaBD);
+		} catch (ParseException e1) {
+			
+		}
+		apuestaDTO.setHora(horaF.format(horaBDC));
 		if(registrarVentaDTO.getIdCustomer() != null) {
 			apuestaDTO.setIdCliente(registrarVentaDTO.getIdCustomer().intValue());
 		}
@@ -102,8 +117,7 @@ public class RecargasService {
 				response= new ResponseDTO();
 			}
 			response.setExito(Boolean.FALSE);
-			response.setMensaje("No tiene programación de horario para la hora especifica.");
-	        
+                        response.setMensaje("Problemas con la transacción.");
 		}
 		return response;
 	}
@@ -113,28 +127,42 @@ public class RecargasService {
 		ResponseDTO response =new ResponseDTO();
 		
 		try {
+			Date fechaBD = new Date();
+			// fecha BD
+			Query qBd = em.createNativeQuery("select to_char(timezone('GMT 5'\\:\\:text, CURRENT_TIMESTAMP), 'dd/mm/yyyy'\\:\\:text)");
+				String fechaChar=(String) qBd.getSingleResult();
+				SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+				fechaBD = format.parse(fechaChar);
+				qBd=em.createNativeQuery("select to_char(timezone('GMT 5'\\:\\:text, CURRENT_TIMESTAMP), 'HH24:MI:SS'\\:\\:text)");
+				String horaBD=(String) qBd.getSingleResult();
 		
-		for (RegistrarRecargaDTO rec : registrarVentaDTO.getRecargas()) {
-			 response = TransaccionFacade.send(apuestaDTO,
-					 recargasRepository.consultarParametro(ParametrosConstants.REGISTRAR_TRANSACCION));
-			if(rec.getIdPaquete()!=null) {
-			recargasRepository.registrarRecarga(response.getIdTransaccion(),rec.getIdOperador(), EstadoEnum.ACTIVO.name(), new Date(),
-					registrarVentaDTO.getIdUser().intValue(), rec.getValorRecarga(), rec.getNumeroRecarga(),rec.getIdPaquete());
+			for (RegistrarRecargaDTO rec : registrarVentaDTO.getRecargas()) {
+				 response = TransaccionFacade.send(apuestaDTO,
+						 recargasRepository.consultarParametro(ParametrosConstants.REGISTRAR_TRANSACCION));
+				if(rec.getIdPaquete()!=null) {
+				recargasRepository.registrarRecarga(response.getIdTransaccion(),rec.getIdOperador(), EstadoEnum.ACTIVO.name(),fechaBD,
+						registrarVentaDTO.getIdUser().intValue(), rec.getValorRecarga(), rec.getNumeroRecarga(),rec.getIdPaquete(),horaBD);
+				}
+				else {
+					recargasRepository.registrarRecarga(response.getIdTransaccion(),rec.getIdOperador(), EstadoEnum.ACTIVO.name(),fechaBD,
+							registrarVentaDTO.getIdUser().intValue(), rec.getValorRecarga(), rec.getNumeroRecarga(),horaBD);
+				}
+				
+				apuestaDTO.setIdTransaccion(response.getIdTransaccion());
+				
+				TransaccionFacade.send(apuestaDTO,
+						recargasRepository.consultarParametro(ParametrosConstants.CONFIRMAR_TRANSACCION));
+				
+				// Se envia la transaccion al operador
+				OperadorFactory factory = OperadorFactory.getInstance(em);
+				IOperador operador = factory.obtenerOperador(rec.getIdOperador());
+				operador.recargar(rec);
 			}
-			else {
-				recargasRepository.registrarRecarga(response.getIdTransaccion(),rec.getIdOperador(), EstadoEnum.ACTIVO.name(), new Date(),
-						registrarVentaDTO.getIdUser().intValue(), rec.getValorRecarga(), rec.getNumeroRecarga());
-			}
-			
-			apuestaDTO.setIdTransaccion(response.getIdTransaccion());
-			
-			TransaccionFacade.send(apuestaDTO,
-					recargasRepository.consultarParametro(ParametrosConstants.CONFIRMAR_TRANSACCION));
-		}
 		}
 		catch(Exception e) {
+			log.error(e.getMessage());
 			response.setExito(Boolean.FALSE);
-			response.setMensaje("Problemas con la transacción");
+			response.setMensaje(e.getMessage());
 			return response;
 		}
 	
