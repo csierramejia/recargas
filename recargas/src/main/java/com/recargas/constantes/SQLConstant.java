@@ -1,5 +1,7 @@
 package com.recargas.constantes;
 
+import com.recargas.enums.EstadoEnum;
+
 /**
  * Clase constante que contiene los DMLs Y DDLs para las consultas nativas
  */
@@ -67,6 +69,19 @@ public class SQLConstant {
 	
 	public static final String SELECT_OPERADORES = "SELECT s FROM OperadoresRecargas s WHERE s.idEstado=:estado";
 	
+	/** Se utiliza para verificar sin un usuario tiene programacion*/
+	public static final String GET_PROGRAMACION_VENDEDOR = "SELECT EXISTS( SELECT  1 " 
+			+ "FROM  HORARIOS_VENDEDORES HV JOIN HORARIOS_VENDEDORES_DETALLES HVD ON (HV.ID_HORARIO_VENDEDOR = HVD.ID_HORARIO_VENDEDOR) JOIN HORARIOS HO ON(HO.CODIGO_HORA=HVD.HORA) "
+			+ "WHERE HV.ID_VENDEDOR =:idUsuario AND TO_CHAR(HVD.DIA,'YYYY-MM-DD') = TO_CHAR(CURRENT_DATE,'YYYY-MM-DD') " 
+			+ "AND HO.HORA_INICIAL <= to_char(timezone('GMT 5', CURRENT_TIMESTAMP), 'HH24:MI:SS') AND to_char(timezone('GMT 5', CURRENT_TIMESTAMP), 'HH24:MI:SS') <= HO.HORA_FINAL "
+			+ "AND HV.ID_ESTADO='" + EstadoEnum.ACTIVO.name()
+			+ "'AND HVD.ID_ESTADO='" + EstadoEnum.ACTIVO.name()
+			+ "'AND HO.ID_ESTADO='"+ EstadoEnum.ACTIVO.name() +"')";
+	
+	/** Se utiliza para verificar sin un usuario tiene rol administrador*/
+	public static final String GET_ROL_ADMIN="SELECT EXISTS( SELECT  1 FROM  USUARIOS_ROLES_EMPRESAS UR JOIN ROLES RO ON(RO.ID_ROL=UR.ID_ROL) WHERE UR.ID_USUARIO =:idUsuario AND RO.ID_ROL = 2)";
+	
+
 	
 
 }
