@@ -26,5 +26,6 @@ public class TransaccionDTO implements Serializable {
     private double valorTransaccion;
     private int idCliente;
     private String idEstado;
-    
+    private Long idOficina;
+    private Long idPuntoVenta;
 }

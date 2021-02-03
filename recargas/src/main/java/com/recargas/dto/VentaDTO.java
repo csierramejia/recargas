@@ -23,5 +23,7 @@ public class VentaDTO implements Serializable {
 	private List<RegistrarRecargaDTO> recargas;
 	private String canal;
 	private String producto;
+	private Long idOficina;
+	private Long idPuntoVenta;
 
 }
