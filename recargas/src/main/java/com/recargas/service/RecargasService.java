@@ -142,7 +142,6 @@ public class RecargasService {
 			for (RegistrarRecargaDTO rec : registrarVentaDTO.getRecargas()) {
 				 response = TransaccionFacade.send(apuestaDTO,
 						 recargasRepository.consultarParametro(ParametrosConstants.REGISTRAR_TRANSACCION));
-				
 				if(rec.getIdPaquete()!=null) {
 				recargasRepository.registrarRecarga(response.getIdTransaccion(),rec.getIdOperador(), EstadoEnum.ACTIVO.name(),fechaBD,
 						registrarVentaDTO.getIdUser().intValue(), rec.getValorRecarga(), rec.getNumeroRecarga(),rec.getIdPaquete(),horaBD);
