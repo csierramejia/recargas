@@ -106,6 +106,9 @@ public class RecargasService {
 		apuestaDTO.setLongitud(null);
 		apuestaDTO.setValorTransaccion(registrarVentaDTO.getValueBetTotal());
 		apuestaDTO.setIdUsuario(registrarVentaDTO.getIdUser().intValue());
+		apuestaDTO.setIdOficina(registrarVentaDTO.getIdOficina()!=null ? registrarVentaDTO.getIdOficina() :null);
+		apuestaDTO.setIdPuntoVenta(registrarVentaDTO.getIdPuntoVenta() != null ? registrarVentaDTO.getIdPuntoVenta():null);
+		
 		
 		if(registrarVentaDTO.getRecargas()!=null && !registrarVentaDTO.getRecargas().isEmpty()) {
 			response=recarga(registrarVentaDTO,apuestaDTO);
@@ -152,6 +155,7 @@ public class RecargasService {
 				
 				TransaccionFacade.send(apuestaDTO,
 						recargasRepository.consultarParametro(ParametrosConstants.CONFIRMAR_TRANSACCION));
+				
 				
 				// Se envia la transaccion al operador
 				OperadorFactory factory = OperadorFactory.getInstance(em);
