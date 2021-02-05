@@ -20,7 +20,6 @@ import com.recargas.service.IOperador;
 public class OperadorFactory {
 
 	/** Objeto que almacena las implementaciones. */
-	//private ConcurrentHashMap<Integer, IOperador> operadores;
 	private ConcurrentHashMap<Integer, Class<?>> operadores;
 
 	/** Instancia de la clase */
@@ -33,7 +32,6 @@ public class OperadorFactory {
 	 * obtener la instancia de la clase.
 	 */
 	private OperadorFactory() {
-		//operadores = new ConcurrentHashMap<Integer, IOperador>();
 		operadores = new ConcurrentHashMap<Integer, Class<?>>();
 	}
 	
