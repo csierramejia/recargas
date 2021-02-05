@@ -1,5 +1,6 @@
 package com.recargas.factory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.persistence.EntityManager;
@@ -19,7 +20,8 @@ import com.recargas.service.IOperador;
 public class OperadorFactory {
 
 	/** Objeto que almacena las implementaciones. */
-	private ConcurrentHashMap<Integer, IOperador> operadores;
+	//private ConcurrentHashMap<Integer, IOperador> operadores;
+	private ConcurrentHashMap<Integer, Class<?>> operadores;
 
 	/** Instancia de la clase */
 	private static OperadorFactory instancia;
@@ -31,7 +33,8 @@ public class OperadorFactory {
 	 * obtener la instancia de la clase.
 	 */
 	private OperadorFactory() {
-		operadores = new ConcurrentHashMap<Integer, IOperador>();
+		//operadores = new ConcurrentHashMap<Integer, IOperador>();
+		operadores = new ConcurrentHashMap<Integer, Class<?>>();
 	}
 	
 	/**
@@ -54,22 +57,24 @@ public class OperadorFactory {
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 * @throws ClassNotFoundException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
 	 */
 	public IOperador obtenerOperador(int idOperador) 
-			throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+			throws InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 
-		String className;
-		IOperador operador;
+		Class<?> clase;
 		
 		if (operadores.containsKey(idOperador)) {
-		    operador = operadores.get(idOperador);	
+			clase = operadores.get(idOperador);
 		}else {
-			className = consultarOperador(idOperador);
-			operador = (IOperador)Class.forName(className).newInstance();
-			operadores.put(idOperador, operador);
+			clase = Class.forName(consultarOperador(idOperador));
+			operadores.put(idOperador, clase);
 		}
 		
-		return operador;
+		return (IOperador) clase.getDeclaredConstructor().newInstance();
 	}
 	
 	/**
