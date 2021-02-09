@@ -141,10 +141,9 @@ public class RecargasService {
 				
 		
 			for (RegistrarRecargaDTO rec : registrarVentaDTO.getRecargas()) {
-				 //response = TransaccionFacade.send(apuestaDTO,
-					//	 recargasRepository.consultarParametro(ParametrosConstants.REGISTRAR_TRANSACCION));
-				response = TransaccionFacade.send(apuestaDTO,"http://localhost:8091/cartera/transacciones/registrar-transaccion");
-
+				 response = TransaccionFacade.send(apuestaDTO,
+					recargasRepository.consultarParametro(ParametrosConstants.REGISTRAR_TRANSACCION));
+				
 				if(rec.getIdPaquete()!=null) {
 				recargasRepository.registrarRecarga(response.getIdTransaccion(),rec.getIdOperador(), EstadoEnum.ACTIVO.name(),fechaBD,
 						registrarVentaDTO.getIdUser().intValue(), rec.getValorRecarga(), rec.getNumeroRecarga(),rec.getIdPaquete(),horaBD);
@@ -156,9 +155,8 @@ public class RecargasService {
 				
 				apuestaDTO.setIdTransaccion(response.getIdTransaccion());
 				
-				//TransaccionFacade.send(apuestaDTO,
-				//		recargasRepository.consultarParametro(ParametrosConstants.CONFIRMAR_TRANSACCION));
-				TransaccionFacade.send(apuestaDTO,"http://localhost:8091/cartera/transacciones/confirmar-transaccion-venta");
+				TransaccionFacade.send(apuestaDTO,
+						recargasRepository.consultarParametro(ParametrosConstants.CONFIRMAR_TRANSACCION));
 				
 				
 				// Se envia la transaccion al operador
