@@ -108,7 +108,7 @@ public class RecargasService {
 		apuestaDTO.setIdUsuario(registrarVentaDTO.getIdUser().intValue());
 		apuestaDTO.setIdOficina(registrarVentaDTO.getIdOficina()!=null ? registrarVentaDTO.getIdOficina() :null);
 		apuestaDTO.setIdPuntoVenta(registrarVentaDTO.getIdPuntoVenta() != null ? registrarVentaDTO.getIdPuntoVenta():null);
-		
+		apuestaDTO.setFecha(horaBDC);
 		
 		if(registrarVentaDTO.getRecargas()!=null && !registrarVentaDTO.getRecargas().isEmpty()) {
 			response=recarga(registrarVentaDTO,apuestaDTO);
@@ -138,10 +138,12 @@ public class RecargasService {
 				fechaBD = format.parse(fechaChar);
 				qBd=em.createNativeQuery("select to_char(timezone('GMT 5'\\:\\:text, CURRENT_TIMESTAMP), 'HH24:MI:SS'\\:\\:text)");
 				String horaBD=(String) qBd.getSingleResult();
+				
 		
 			for (RegistrarRecargaDTO rec : registrarVentaDTO.getRecargas()) {
 				 response = TransaccionFacade.send(apuestaDTO,
 						 recargasRepository.consultarParametro(ParametrosConstants.REGISTRAR_TRANSACCION));
+				
 				if(rec.getIdPaquete()!=null) {
 				recargasRepository.registrarRecarga(response.getIdTransaccion(),rec.getIdOperador(), EstadoEnum.ACTIVO.name(),fechaBD,
 						registrarVentaDTO.getIdUser().intValue(), rec.getValorRecarga(), rec.getNumeroRecarga(),rec.getIdPaquete(),horaBD);
