@@ -69,7 +69,7 @@ public class RecargasService {
     	try {
     		TransaccionDTO apuestaDTO = new TransaccionDTO();
     		
-    		if(!obtenerRolAdministrador(registrarVentaDTO.getIdUser()) && !obtenerProgramacion(registrarVentaDTO.getIdUser())) {
+    		if(obtenerRolProgramacion(registrarVentaDTO.getIdUser()) && !obtenerProgramacion(registrarVentaDTO.getIdUser())) {
     			response = new ResponseDTO();
     			response.setExito(Boolean.FALSE);
     			response.setMensaje("No tiene programación de horario para la hora especifica.");
@@ -202,8 +202,8 @@ public class RecargasService {
 	 * @return boolean
 	 * @throws Exception
 	 */
-	private Boolean obtenerRolAdministrador(Long idUsuario) throws Exception {
-		Query q = this.em.createNativeQuery(SQLConstant.GET_ROL_ADMIN);
+	private Boolean obtenerRolProgramacion(Long idUsuario) throws Exception {
+		Query q = this.em.createNativeQuery(SQLConstant.GET_ROL_PROGRAMACION);
 			q.setParameter("idUsuario", idUsuario);
 			return  (boolean) q.getSingleResult();	
 			
