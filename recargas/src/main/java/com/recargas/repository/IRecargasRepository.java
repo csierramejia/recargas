@@ -1,7 +1,5 @@
 package com.recargas.repository;
 
-import java.util.Date;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -20,35 +18,33 @@ public interface IRecargasRepository extends JpaRepository<Recargas, Long> {
 	@Query(
 	  value = 
 	    " INSERT INTO recargas "
-	    + " (id_recarga,id_operador, id_estado, fecha, id_usuario, valor,numero_celular,hora) "
-	    + " VALUES (?, ?, ?, ?, ?, ?,?,?)",
+	    + " (id_recarga, id_operador, id_estado, id_usuario, valor, numero_celular) "
+	    + " VALUES (?, ?, ?, ?, ?, ?)",
 	  nativeQuery = true)
 	void registrarRecarga(
 			@Param("idRecarga") Long idRecarga,
 			@Param("idOperador") Integer idOperador, 
 			@Param("idEstado") String idEstado,
-			@Param("fecha") Date fecha,
 			@Param("idUsuario") Integer idUsuario,
 			@Param("valor") Long valor, 
-	        @Param("numeroCelular") String numeroCelular,@Param("hora") String hora);
+	        @Param("numeroCelular") String numeroCelular);
 	
 
 	@Modifying
 	@Query(
 	  value = 
 	    " INSERT INTO recargas "
-	    + " (id_recarga,id_operador, id_estado, fecha, id_usuario, valor,numero_celular,id_paquete, hora) "
-	    + " VALUES (?, ?, ?, ?, ?, ?,?,?,?)",
+	    + " (id_recarga,id_operador, id_estado, id_usuario, valor, numero_celular, id_paquete) "
+	    + " VALUES (?, ?, ?, ?, ?, ?, ?)",
 	  nativeQuery = true)
 	void registrarRecarga(
 			@Param("idRecarga") Long idRecarga,
 			@Param("idOperador") Integer idOperador, 
 			@Param("idEstado") String idEstado,
-			@Param("fecha") Date fecha,
 			@Param("idUsuario") Integer idUsuario,
 			@Param("valor") Long valor, 
 	        @Param("numeroCelular") String numeroCelular,
-	        @Param("idPaquete") Integer idPaquete,@Param("hora") String hora);
+	        @Param("idPaquete") Integer idPaquete);
 	
 
 	@Query(value=" SELECT valor FROM parametros "

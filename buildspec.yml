@@ -9,7 +9,7 @@ phases:
       - cd recargas
       - mvn clean
       - mvn package
-      - echo Logging in to Amazon ECR...
+      - echo Logging in to Amazon ECR ...
       - aws --version
       - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
       - pip3 install awscli --upgrade --user

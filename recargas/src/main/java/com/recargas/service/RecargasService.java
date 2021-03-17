@@ -130,34 +130,23 @@ public class RecargasService {
 		ResponseDTO response =new ResponseDTO();
 		
 		try {
-			Date fechaBD = new Date();
-			// fecha BD
-			Query qBd = em.createNativeQuery("select to_char(timezone('GMT 5'\\:\\:text, CURRENT_TIMESTAMP), 'dd/mm/yyyy'\\:\\:text)");
-				String fechaChar=(String) qBd.getSingleResult();
-				SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-				fechaBD = format.parse(fechaChar);
-				qBd=em.createNativeQuery("select to_char(timezone('GMT 5'\\:\\:text, CURRENT_TIMESTAMP), 'HH24:MI:SS'\\:\\:text)");
-				String horaBD=(String) qBd.getSingleResult();
-				
-		
 			for (RegistrarRecargaDTO rec : registrarVentaDTO.getRecargas()) {
-				 response = TransaccionFacade.send(apuestaDTO,
+				response = TransaccionFacade.send(apuestaDTO,
 					recargasRepository.consultarParametro(ParametrosConstants.REGISTRAR_TRANSACCION));
 				
 				if(rec.getIdPaquete()!=null) {
-				recargasRepository.registrarRecarga(response.getIdTransaccion(),rec.getIdOperador(), EstadoEnum.ACTIVO.name(),fechaBD,
-						registrarVentaDTO.getIdUser().intValue(), rec.getValorRecarga(), rec.getNumeroRecarga(),rec.getIdPaquete(),horaBD);
+				recargasRepository.registrarRecarga(response.getIdTransaccion(),rec.getIdOperador(), EstadoEnum.ACTIVO.name(),
+						registrarVentaDTO.getIdUser().intValue(), rec.getValorRecarga(), rec.getNumeroRecarga(),rec.getIdPaquete());
 				}
 				else {
-					recargasRepository.registrarRecarga(response.getIdTransaccion(),rec.getIdOperador(), EstadoEnum.ACTIVO.name(),fechaBD,
-							registrarVentaDTO.getIdUser().intValue(), rec.getValorRecarga(), rec.getNumeroRecarga(),horaBD);
+					recargasRepository.registrarRecarga(response.getIdTransaccion(),rec.getIdOperador(), EstadoEnum.ACTIVO.name(),
+							registrarVentaDTO.getIdUser().intValue(), rec.getValorRecarga(), rec.getNumeroRecarga());
 				}
 				
 				apuestaDTO.setIdTransaccion(response.getIdTransaccion());
 				
 				TransaccionFacade.send(apuestaDTO,
 						recargasRepository.consultarParametro(ParametrosConstants.CONFIRMAR_TRANSACCION));
-				
 				
 				// Se envia la transaccion al operador
 				OperadorFactory factory = OperadorFactory.getInstance(em);
