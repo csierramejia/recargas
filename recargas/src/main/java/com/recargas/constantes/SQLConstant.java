@@ -79,7 +79,7 @@ public class SQLConstant {
 			+ "'AND HO.ID_ESTADO='"+ EstadoEnum.ACTIVO.name() +"')";
 	
 	/** Se utiliza para verificar sin un usuario tiene rol administrador*/
-	public static final String GET_ROL_ADMIN="SELECT EXISTS( SELECT  1 FROM  USUARIOS_ROLES_EMPRESAS UR JOIN ROLES RO ON(RO.ID_ROL=UR.ID_ROL) WHERE UR.ID_USUARIO =:idUsuario AND RO.ID_ROL = 2)";
+	public static final String GET_ROL_PROGRAMACION="SELECT EXISTS( SELECT  1 FROM  USUARIOS_ROLES_EMPRESAS UR JOIN ROLES RO ON(RO.ID_ROL=UR.ID_ROL) WHERE UR.ID_USUARIO =:idUsuario AND RO.ID_PROGRAMACION = '"+ EstadoEnum.ACTIVO.name() +"')";
 	
 
 	
